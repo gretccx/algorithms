@@ -1,0 +1,64 @@
+public class Solution {
+    /**
+     * @param org: a permutation of the integers from 1 to n
+     * @param seqs: a list of sequences
+     * @return: true if it can be reconstructed only one or false
+     */
+    public boolean sequenceReconstruction(int[] org, int[][] seqs) {
+        // write your code here
+        if (seqs == null) {
+            return false;
+        }
+        
+        int n = org.length;
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        int[] indegrees = new int[n + 1];
+        
+        for (int[] seq : seqs) {
+            if (seq == null || seq.length == 0) {
+                continue;
+            }
+            for (int i = 0; i < seq.length; i++) {
+                if (seq[i] < 0 || seq[i] > n) {
+                    return false;
+                }
+                if (!map.containsKey(seq[i])) {
+                    map.put(seq[i], new HashSet<>());
+                    
+                }
+                if (i > 0 && map.get(seq[i - 1]).add(seq[i])) {
+                    indegrees[seq[i]]++;
+                }
+            }
+        }
+        
+        if (map.size() != n) {
+            return false;
+        }
+        
+        int index = 0;
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 1; i < n + 1; i++) {
+            if (indegrees[i] == 0) {
+                q.offer(i);
+            }
+        }
+        
+        while (q.size() == 1) {
+            int num = q.poll();
+            if (num != org[index]) {
+                return false;
+            }
+            
+            for (int next : map.get(num)) {
+                indegrees[next]--;
+                if (indegrees[next] == 0) {
+                    q.offer(next);
+                }
+            }
+            index++;
+        }
+        
+        return index == n;
+    }
+}
