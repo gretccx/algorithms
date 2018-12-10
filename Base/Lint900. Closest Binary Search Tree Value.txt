@@ -1,0 +1,121 @@
+求出 lowerBound 和 upperBound
+	即 < target 的最大值和 >= target 的最小值
+然后在两者之中去比较谁更接近，返回即可。
+时间复杂度为 O(h)
+	如果使用 in-order traversal ，时间复杂度会是 o(n) ，并不是最优的
+	另外，复杂度也不是 O(logn) ，因为 BST 并不保证树高是 logn 的
+
+
+方法一：non-recursion
+
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+
+public class Solution {
+    /**
+     * @param root: the given BST
+     * @param target: the given target
+     * @return: the value in the BST that is closest to the target
+     */
+    public int closestValue(TreeNode root, double target) {
+        // write your code here
+        TreeNode lowerBound = null;
+        TreeNode upperBound = null;
+        
+        while (root != null) {
+            
+            if (root.val < target) {
+                lowerBound = root;
+                root = root.right;
+            } else if (root.val > target) {
+                upperBound = root;
+                root = root.left;
+            } else {
+                return root.val;
+            }
+        }
+        
+        if (lowerBound == null) {
+            return upperBound.val;
+        }
+        if (upperBound == null) {
+            return lowerBound.val;
+        }
+        
+        return target - lowerBound.val < upperBound.val - target ? lowerBound.val : upperBound.val;
+    }
+}
+
+
+
+
+方法二：recursion
+
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+public class Solution {
+    /**
+     * @param root: the given BST
+     * @param target: the given target
+     * @return: the value in the BST that is closest to the target
+     */
+    public int closestValue(TreeNode root, double target) {
+        // write your code here
+        TreeNode lowerBound = getLowerBound(root, target);
+        TreeNode upperBound = getUpperBound(root, target);
+        
+        if (lowerBound == null) {
+            return upperBound.val;
+        }
+        if (upperBound == null) {
+            return lowerBound.val;
+        }
+        return target - lowerBound.val < upperBound.val - target ? lowerBound.val : upperBound.val;
+    }
+    
+    private TreeNode getLowerBound(TreeNode root, double target) {
+        if (root == null) {
+            return null;
+        }
+        if (root.val < target) {
+            TreeNode right = getLowerBound(root.right, target);
+            return right == null ? root : right;
+        }
+        if (root.val > target) {
+            return getLowerBound(root.left, target);
+        }
+        return root;
+    }
+    
+    private TreeNode getUpperBound(TreeNode root, double target) {
+        if (root == null) {
+            return null;
+        }
+        if (root.val < target) {
+            return getUpperBound(root.right, target);
+        }
+        if (root.val > target) {
+            TreeNode left = getUpperBound(root.left, target);
+            return left == null ? root : left;
+        }
+        return root;
+    }
+}
