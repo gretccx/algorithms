@@ -1,0 +1,210 @@
+方法一：
+
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+
+public class Solution {
+    /**
+     * @param root: the given BST
+     * @param target: the given target
+     * @param k: the given k
+     * @return: k values in the BST that are closest to the target
+     */
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {
+        // write your code here
+        List<Integer> list = new ArrayList<>();
+        if (root == null || k < 1) {
+            return list;
+        }
+        
+        Stack<TreeNode> lowerStack = getStack(root, target);
+        Stack<TreeNode> upperStack = new Stack<>();
+        upperStack.addAll(lowerStack);
+        
+        if (lowerStack.peek().val == target) {
+            list.add(moveDown(lowerStack).val);
+            moveUp(upperStack);
+            k--;
+        } else if (lowerStack.peek().val > target) {
+            moveDown(lowerStack);
+        } else {
+            moveUp(upperStack);
+        }
+        
+        while (k > 0) {
+            if (!lowerStack.isEmpty() && !upperStack.isEmpty()) {
+                if (target - lowerStack.peek().val <= upperStack.peek().val - target) {
+                    list.add(moveDown(lowerStack).val);
+                } else {
+                    list.add(moveUp(upperStack).val);
+                }
+            } else if (!lowerStack.isEmpty()) {
+                list.add(moveDown(lowerStack).val);
+            } else if (!upperStack.isEmpty()) {
+                list.add(moveUp(upperStack).val);
+            }
+            k--;
+        }
+        
+        return list;
+    }
+    
+    private Stack<TreeNode> getStack(TreeNode root, double target) {
+        
+        Stack<TreeNode> stack = new Stack<>();
+        
+        while (root != null) {
+            stack.push(root);
+            
+            if (root.val < target) {
+                root = root.right;
+            } else if (root.val > target) {
+                root = root.left;
+            } else {
+                break;
+            }
+        }
+        
+        return stack;
+    }
+    
+    private TreeNode moveUp(Stack<TreeNode> stack) {
+        
+        TreeNode curr = stack.peek();
+        TreeNode node = curr;
+        
+        if (node.right == null) {
+            node = stack.pop();
+            while (!stack.isEmpty() && stack.peek().right == node) {
+                node = stack.pop();
+            }
+        } else {
+            node = node.right;
+            while (node != null) {
+                stack.push(node);
+                node = node.left;
+            }
+        }
+        
+        return curr;
+    }
+    
+    private TreeNode moveDown(Stack<TreeNode> stack) {
+        
+        TreeNode curr = stack.peek();
+        TreeNode node = curr;
+        
+        if (node.left == null) {
+            stack.pop();
+            while (!stack.isEmpty() && stack.peek().left == node) {
+                node = stack.pop();
+            }
+        } else {
+            node = node.left;
+            while (node != null) {
+                stack.push(node);
+                node = node.right;
+            }
+        }
+        
+        return curr;
+    }
+}
+
+
+
+
+方法二：
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+
+public class Solution {
+    /**
+     * @param root: the given BST
+     * @param target: the given target
+     * @param k: the given k
+     * @return: k values in the BST that are closest to the target
+     */
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {
+        // write your code here
+        List<Integer> res = new ArrayList<>();
+        if (root == null || k < 1) {
+            return null;
+        }
+        
+        List<Integer> inTraversal = getInorderTraversal(root);
+        int index = 0;
+        int size = inTraversal.size();
+        for (; index < size; index++) {
+            if (inTraversal.get(index) >= target) {
+                break;
+            }
+        }
+        
+        int left = index - 1;
+        int right = index;
+        for (int i = 0; i < k; i++) {
+            if (left < 0 || right < size && target - inTraversal.get(left) > inTraversal.get(right) - target) {
+                res.add(inTraversal.get(right++));
+            } else if (left < 0 && right >= size) {
+                break;
+            } else {
+                res.add(inTraversal.get(left--));
+            }
+        }
+        
+        return res;
+    }
+    
+    private List<Integer> getInorderTraversal(TreeNode root) {
+        List<Integer> inTraversal = new ArrayList<>();
+        if (root == null) {
+            return inTraversal;
+        }
+        
+        Stack<TreeNode> stack = new Stack<>();
+        while (root != null) {
+            stack.push(root);
+            root = root.left;
+        }
+        
+        while (!stack.isEmpty()) {
+            
+            inTraversal.add(stack.peek().val);
+            
+            TreeNode node = stack.peek();
+            if (node.right == null) {
+                node = stack.pop();
+                while (!stack.isEmpty() && stack.peek().right == node) {
+                    node = stack.pop();
+                }
+            } else {
+                node = node.right;
+                while (node != null) {
+                    stack.push(node);
+                    node = node.left;
+                }
+            }
+        }
+        
+        return inTraversal;
+    }
+}
