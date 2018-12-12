@@ -1,0 +1,54 @@
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+class ResultType {
+    public TreeNode min;
+    public TreeNode max;
+    public boolean isBST;
+    public ResultType(TreeNode min, TreeNode max, boolean isBST) {
+        this.min = min;
+        this.max = max;
+        this.isBST = isBST;
+    }
+}
+public class Solution {
+    /**
+     * @param root: The root of binary tree.
+     * @return: True if the binary tree is BST, or false
+     */
+    public boolean isValidBST(TreeNode root) {
+        // write your code here
+        return helper(root).isBST;
+    }
+    
+    private ResultType helper(TreeNode root) {
+        if (root == null) {
+            return new ResultType(null, null, true);
+        }
+        
+        ResultType left = helper(root.left);
+        ResultType right = helper(root.right);
+        
+        if (!left.isBST || !right.isBST) {
+            return new ResultType(null, null, false);
+        }
+        if (left.max != null && left.max.val >= root.val) {
+            return new ResultType(null, null, false);
+        }
+        if (right.min != null && right.min.val <= root.val) {
+            return new ResultType(null, null, false);
+        }
+        
+        TreeNode min = left.min == null ? root : left.min;
+        TreeNode max = right.max == null ? root : right.max;
+        return new ResultType(min, max, true);
+    }
+}

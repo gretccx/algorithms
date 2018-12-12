@@ -1,0 +1,66 @@
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+class ResultType {
+    public boolean aExits;
+    public boolean bExits;
+    public TreeNode lca;
+    public ResultType(boolean a, boolean b, TreeNode n) {
+        this.aExits = a;
+        this.bExits = b;
+        this.lca = n;
+    }
+}
+
+public class Solution {
+    /*
+     * @param root: The root of the binary tree.
+     * @param A: A TreeNode
+     * @param B: A TreeNode
+     * @return: Return the LCA of the two nodes.
+     */
+    public TreeNode lowestCommonAncestor3(TreeNode root, TreeNode A, TreeNode B) {
+        // write your code here
+        ResultType res = helper(root, A, B);
+        if (res.aExits && res.bExits) {
+            return res.lca;
+        }
+        return null;
+    }
+    
+    private ResultType helper(TreeNode root, TreeNode A, TreeNode B) {
+        
+        if (root == null) {
+            return new ResultType(false, false, null);
+        }
+        
+        ResultType left = helper(root.left, A, B);
+        ResultType right = helper(root.right, A, B);
+        
+        boolean a = left.aExits || right.aExits || root == A;
+        boolean b = left.bExits || right.bExits || root == B;
+        
+        if (root == A || root == B) {
+            return new ResultType(a, b, root);
+        }
+        
+        if (left.lca != null && right.lca != null) {
+            return new ResultType(a, b, root);
+        }
+        if (left.lca != null) {
+            return new ResultType(a, b, left.lca);
+        }
+        if (right.lca != null) {
+            return new ResultType(a, b, right.lca);
+        }
+        return new ResultType(a, b, null);
+    }
+}
