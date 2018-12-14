@@ -1,0 +1,24 @@
+public class Solution {
+    /**
+     * @param nums: A set of numbers
+     * @return: A list of lists
+     */
+    public List<List<Integer>> subsets(int[] nums) {
+        // write your code here
+        
+        List<List<Integer>> results = new ArrayList<>();
+        Arrays.sort(nums);
+        int n = nums.length;
+        
+        for (int i = 0; i < (1 << n); i++) {
+            List<Integer> subset = new ArrayList<>();
+            for (int j = 0; j < n; j++) {
+                if ((i & (1 << j)) != 0) {
+                    subset.add(nums[j]);
+                }
+            }
+            results.add(subset);
+        }
+        return results;
+    }
+}
