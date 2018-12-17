@@ -1,0 +1,51 @@
+public class Solution {
+    /*
+     * @param s: A string
+     * @param wordDict: A set of words.
+     * @return: All possible sentences.
+     */
+    public List<String> wordBreak(String s, Set<String> wordDict) {
+        // write your code here
+        List<String> sentences = new ArrayList<>();
+        if (s == null || wordDict == null || wordDict.size() == 0) {
+            return sentences;
+        }
+        
+        Map<String, List<String>> memo = new HashMap<>();
+        return helper(s, wordDict, memo);
+    }
+    
+    private List<String> helper(String s,
+                                Set<String> dict,
+                                Map<String, List<String>> memo) {
+        if (memo.containsKey(s)) {
+            return memo.get(s);
+        }
+        
+        List<String> sentences = new ArrayList<>();
+        
+        if (s.length() == 0) {
+            return sentences;
+        }
+        
+        if (dict.contains(s)) {
+            sentences.add(s);
+        }
+        
+        for (int i = 1; i < s.length(); i++) {
+            String word = s.substring(0, i);
+            if (!dict.contains(word)) {
+                continue;
+            }
+            String remain = s.substring(i);
+            List<String> suffixes = helper(remain, dict, memo);
+            for (String suffix : suffixes) {
+                String sentence = word + " " + suffix;
+                sentences.add(sentence);
+            }
+        }
+        
+        memo.put(s, sentences);
+        return sentences;
+    }
+}

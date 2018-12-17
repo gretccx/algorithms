@@ -1,0 +1,55 @@
+public class Solution {
+    /**
+     * @param s: A string 
+     * @param p: A string includes "?" and "*"
+     * @return: is Match?
+     */
+    public boolean isMatch(String s, String p) {
+        // write your code here
+        if (s == null || p == null) {
+            return true;
+        }
+        
+        Map<Integer, Boolean> memo = new HashMap<>();
+        return helper(s, 0, p, 0, s.length(), memo);
+    }
+    
+    private boolean helper(String s, int i, String p, int j, int radix,
+                           Map<Integer, Boolean> memo) {
+        
+        if (memo.containsKey(i * radix + j)) {
+            return memo.get(i * radix + j);
+        }
+        
+        if (j >= p.length()) {
+            return i >= s.length();
+        }
+        
+        if (i >= s.length()) {
+            for (int index = j; index < p.length(); index++) {
+                if (p.charAt(index) != '*') {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        boolean res = false;
+        if (p.charAt(j) == '*') {
+            res = helper(s, i, p, j + 1, radix, memo) ||
+                helper(s, i + 1, p, j, radix, memo);
+        } else {
+            res = isCharMatch(s.charAt(i), p.charAt(j)) &&
+                helper(s, i + 1, p, j + 1, radix, memo);
+        }
+        
+        memo.put(i * radix + j, res);
+        return res;
+    }
+    
+    private boolean isCharMatch(char s, char p) {
+        return s == p || p == '?';
+    }
+    
+    // private boolean isAllStar()
+}
