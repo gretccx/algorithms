@@ -1,0 +1,40 @@
+public class Solution {
+    /**
+     * @param pattern: a string,denote pattern string
+     * @param str: a string, denote matching string
+     * @return: a boolean
+     */
+    public boolean wordPatternMatch(String pattern, String str) {
+        // write your code here
+        Map<Character, String> used = new HashMap<>();
+        return isMatch(pattern, str, 0, 0, used);
+    }
+    
+    private boolean isMatch(String pattern, String str, int pIndex, int sIndex,
+                            Map<Character, String> used) {
+        if (pIndex == pattern.length()) {
+            return sIndex == str.length();
+        }
+        if (used.containsKey(pattern.charAt(pIndex))) {
+            String substr = used.get(pattern.charAt(pIndex));
+            if (!str.startsWith(substr, sIndex)) {
+                return false;
+            }
+            return isMatch(pattern, str, pIndex + 1, sIndex + substr.length(), used);
+        }
+        
+        for (int i = sIndex; i < str.length(); i++) {
+            String substr = str.substring(sIndex, i + 1);
+            if (used.containsValue(substr)){
+                continue;
+            }
+            used.put(pattern.charAt(pIndex), substr);
+            if (isMatch(pattern, str, pIndex + 1, i + 1, used)) {
+                return true;
+            }
+            used.remove(pattern.charAt(pIndex));
+        }
+        
+        return false;
+    }
+}

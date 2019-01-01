@@ -1,0 +1,45 @@
+public class Solution {
+    /**
+     * @param n: The number of queens.
+     * @return: The total number of distinct solutions.
+     */
+    int sum = 0;
+    
+    public int totalNQueens(int n) {
+        // write your code here
+        if (n <= 0) {
+            return sum;
+        }
+        
+        int[] used = new int[n];
+        placeQueen(n, 0, used);
+        return sum;
+    }
+    
+    private void placeQueen(int n, int col, int[] used) {
+        if (col == n) {
+            sum++;
+            return;
+        }
+        
+        for (int row = 0; row < n; row++) {
+            if (isValidAttack(row, col, used)) {
+                continue;
+            }
+            used[col] = row;
+            placeQueen(n, col + 1, used);
+        }
+    }
+    
+    private boolean isValidAttack(int row, int col, int[] used) {
+        for (int i = 0; i < col; i++) {
+            if (used[i] == row) {
+                return true;
+            }
+            if (used[i] + i == row + col || used[i] - i == row - col) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

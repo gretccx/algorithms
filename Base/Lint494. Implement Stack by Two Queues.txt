@@ -1,0 +1,59 @@
+public class Stack {
+    private Queue<Integer> q1;
+    private Queue<Integer> q2;
+    /*
+     * @param x: An integer
+     * @return: nothing
+     */
+    public Stack() {
+        q1 = new LinkedList<>();
+        q2 = new LinkedList<>();
+    }
+    
+    private void moveItems() {
+        while (q1.size() > 1) {
+            q2.offer(q1.poll());
+        }
+    }
+    
+    private void swapQueues() {
+        Queue<Integer> tmp = q1;
+        q1 = q2;
+        q2 = tmp;
+    }
+    
+    public void push(int x) {
+        // write your code here
+        q1.offer(x);
+    }
+
+    /*
+     * @return: nothing
+     */
+    public void pop() {
+        // write your code here
+        moveItems();
+        q1.poll();
+        swapQueues();
+    }
+
+    /*
+     * @return: An integer
+     */
+    public int top() {
+        // write your code here
+        moveItems();
+        int item = q1.poll();
+        q2.offer(item);
+        swapQueues();
+        return item;
+    }
+
+    /*
+     * @return: True if the stack is empty
+     */
+    public boolean isEmpty() {
+        // write your code here
+        return q1.isEmpty();
+    }
+}

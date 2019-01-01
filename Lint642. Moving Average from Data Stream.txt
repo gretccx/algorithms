@@ -1,0 +1,60 @@
+public class MovingAverage {
+    private Queue<Integer> q = new LinkedList<>();
+    private double sum = 0;
+    private int size;
+    /*
+    * @param size: An integer
+    */public MovingAverage(int size) {
+        // do intialization if necessary
+        this.size = size;
+    }
+
+    /*
+     * @param val: An integer
+     * @return:  
+     */
+    public double next(int val) {
+        // write your code here
+        q.offer(val);
+        sum += val;
+        if (q.size() > size) {
+            sum -= q.poll();
+        }
+        return sum / q.size();
+    }
+}
+
+
+
+
+方法自：用数组
+
+public class MovingAverage {
+    private int[] nums;
+    private int size;
+    private int tail = 0;
+    private double sum = 0;
+    /*
+    * @param size: An integer
+    */public MovingAverage(int size) {
+        // do intialization if necessary
+        this.size = size;
+        nums = new int[size];
+    }
+
+    /*
+     * @param val: An integer
+     * @return:  
+     */
+    public double next(int val) {
+        // write your code here
+        int tmp = nums[tail%size];
+        nums[tail%size] = val;
+        tail++;
+        sum = sum + val - tmp;
+        if (tail <= size) {
+            return sum / tail;
+        }
+        return sum / size;
+    }
+}
